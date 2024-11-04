@@ -233,9 +233,32 @@ td {
         background-color: #ff4444;
         color: white;
     }
+
+    /* Add this to your existing styles */
+    .save-indicator {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        display: none;
+        animation: fadeInOut 2s ease-in-out;
+    }
+
+    @keyframes fadeInOut {
+        0% { opacity: 0; }
+        20% { opacity: 1; }
+        80% { opacity: 1; }
+        100% { opacity: 0; }
+    }
         </style>
         <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-        </head><body><table width="100%">
+        </head><body><div id="storedData" style="display: none;">
+    <!-- Data will be stored here as JSON in a textarea -->
+    <textarea id="storedDataContent"></textarea>
+</div>
             
             <tbody><tr>
                 <td>
@@ -515,49 +538,6 @@ td {
                                     <th>Credit/Audit</th>
                                 </tr>
                             
-                                
-                                    <tr style="">
-                                        <td class="editable-cell">
-                                            <div class="content">--
-                                            </div>
-                                            <div class="button-group">
-                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
-                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
-                                            </div>
-                                            <div class="editable" contenteditable="true"></div>
-                                        </td>
-                                        <td class="editable-cell">
-                                            <div class="content">--
-                                            </div>
-                                            <div class="button-group">
-                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
-                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
-                                            </div>
-                                            <div class="editable" contenteditable="true"></div>
-                                        </td>
-                                        <td class="editable-cell">
-                                            <div class="content">--
-                                            </div>
-                                            <div class="button-group">
-                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
-                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
-                                            </div>
-                                            <div class="editable" contenteditable="true"></div>
-                                        </td>
-                                        <td>Core course</td>
-                                        
-                                        <td class="editable-cell">
-                                            <div class="content">--
-                                            </div>
-                                            <div class="button-group">
-                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
-                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
-                                            </div>
-                                            <div class="editable" contenteditable="true"></div>
-                                        </td>
-                                        
-                                        <td>C</td>
-                                    </tr>
                                 
                                     <tr style="">
                                         <td class="editable-cell">
@@ -1288,7 +1268,7 @@ td {
         // Reset onclick handler to enableEditing
         button.onclick = function() { enableEditing(button); };
         
-        // Save to localStorage
+        // Save to hidden textarea instead of localStorage
         saveToLocalStorage();
     };
 }
@@ -1307,7 +1287,7 @@ function confirmEditing(button) {
     editableDiv.style.display = 'none';
     buttonGroup.style.display = 'none';
     
-    // Save to localStorage
+    // Save to hidden textarea instead of localStorage
     saveToLocalStorage();
 }
 
@@ -1579,7 +1559,7 @@ function newCpiRow() {
     rows[0].insertAdjacentElement('afterend', newRow);
 }
 
-// Add these functions for storage management
+// Replace the existing saveToLocalStorage function
 function saveToLocalStorage() {
     const editableCells = document.querySelectorAll('.editable-cell');
     const storedData = {};
@@ -1591,36 +1571,51 @@ function saveToLocalStorage() {
         }
     });
     
-    localStorage.setItem('transcriptData', JSON.stringify(storedData));
+    // Save to both hidden textarea and sessionStorage for redundancy
+    const storedDataContent = document.getElementById('storedDataContent');
+    const dataString = JSON.stringify(storedData);
+    storedDataContent.value = dataString;
+    sessionStorage.setItem('transcriptData', dataString);
+    showSaveIndicator();
 }
 
 function loadFromLocalStorage() {
-    const storedData = localStorage.getItem('transcriptData');
+    // Try to load from sessionStorage first, then fallback to hidden textarea
+    let storedData = sessionStorage.getItem('transcriptData');
+    if (!storedData) {
+        const storedDataContent = document.getElementById('storedDataContent');
+        storedData = storedDataContent.value;
+    }
+    
     if (storedData) {
-        const data = JSON.parse(storedData);
-        const editableCells = document.querySelectorAll('.editable-cell');
-        
-        editableCells.forEach((cell, index) => {
-            const content = data[`cell_${index}`];
-            if (content) {
-                const contentDiv = cell.querySelector('.content');
-                contentDiv.textContent = content;
-                // Don't hide the buttons on load
-                // Keep the button-group visible
-                const buttonGroup = cell.querySelector('.button-group');
-                if (buttonGroup) {
-                    buttonGroup.style.display = 'flex';
+        try {
+            const data = JSON.parse(storedData);
+            const editableCells = document.querySelectorAll('.editable-cell');
+            
+            editableCells.forEach((cell, index) => {
+                const content = data[`cell_${index}`];
+                if (content) {
+                    const contentDiv = cell.querySelector('.content');
+                    contentDiv.textContent = content;
+                    const buttonGroup = cell.querySelector('.button-group');
+                    if (buttonGroup) {
+                        buttonGroup.style.display = 'flex';
+                    }
                 }
-            }
-        });
+            });
+        } catch (e) {
+            console.error('Error loading stored data:', e);
+        }
     }
 }
 
+// Replace the existing resetAllValues function
 function resetAllValues() {
     if (confirm('Are you sure you want to reset all values? This will return the page to its initial state.')) {
-        localStorage.removeItem('transcriptData');
+        // Clear both storage methods
+        document.getElementById('storedDataContent').value = '';
+        sessionStorage.removeItem('transcriptData');
         window.location.reload();
-        // The showPopup will be triggered by DOMContentLoaded after reload
     }
 }
 
@@ -1699,7 +1694,31 @@ function isPageEmpty() {
 let popupInterval;
 
 function showPopup() {
-    document.getElementById('welcomePopup').style.display = 'block';
+    // Create popup if it doesn't exist
+    let popup = document.getElementById('welcomePopup');
+    if (!popup) {
+        popup = document.createElement('div');
+        popup.id = 'welcomePopup';
+        popup.className = 'popup-overlay';
+        popup.innerHTML = `
+            <div class="popup-content">
+                <div class="popup-header">
+                    <div class="popup-title">Welcome!</div>
+                    <button class="popup-close" onclick="closePopup()">×</button>
+                </div>
+                <div class="popup-body">
+                    Open your ASC portal and type the values by looking at them as this will take time to fill.
+                </div>
+                <div class="popup-buttons">
+                    <button class="popup-button help-button" onclick="openHelp()">Help</button>
+                    <button class="popup-button close-button" onclick="closePopup()">Close</button>
+                    <button class="popup-button dont-show-button" onclick="dontShowAgain()">Don't show again</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(popup);
+    }
+    popup.style.display = 'block';
 }
 
 function closePopup() {
@@ -1717,7 +1736,7 @@ function closePopup() {
 }
 
 function dontShowAgain() {
-    localStorage.setItem('dontShowPopup', 'true');
+    sessionStorage.setItem('dontShowPopup', 'true');
     closePopup();
     clearInterval(popupInterval);
 }
@@ -1727,15 +1746,31 @@ function openHelp() {
     closePopup();
 }
 
-// Initialize popup on page load and after reset
+function showSaveIndicator() {
+    let indicator = document.querySelector('.save-indicator');
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.className = 'save-indicator';
+        indicator.textContent = 'Changes saved';
+        document.body.appendChild(indicator);
+    }
+    indicator.style.display = 'block';
+    setTimeout(() => {
+        indicator.style.display = 'none';
+    }, 2000);
+}
+
+// Update the DOMContentLoaded event listener
 document.addEventListener('DOMContentLoaded', () => {
-    if (!localStorage.getItem('dontShowPopup')) {
-        // Show first time after 10 seconds
-        setTimeout(() => {
-            if (isPageEmpty()) {
-                showPopup();
-            }
-        }, 10000);
+    // Load any saved data
+    loadFromLocalStorage();
+    
+    // Always show popup initially unless explicitly disabled
+    const dontShowPopup = sessionStorage.getItem('dontShowPopup') === 'true';
+    
+    if (!dontShowPopup) {
+        // Show first time immediately
+        setTimeout(showPopup, 1000);
         
         // Set up interval for subsequent shows
         popupInterval = setInterval(() => {
@@ -1743,6 +1778,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 showPopup();
             }
         }, 60000);
+    }
+});
+
+// Add this to handle page refresh/unload
+window.addEventListener('beforeunload', () => {
+    saveToLocalStorage();
+});
+
+// Add this to handle page visibility changes
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+        loadFromLocalStorage();
     }
 });
         </script> 
