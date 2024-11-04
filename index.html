@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+        td{
+        font-family: verdana;}
+        body{
+        font-family: verdana;}
+        a{
+        font-family: verdana;}
+        body {
+    margin-top: 39px;
+}
+td {
+    color: #000000;
+    font: 14px verdana;
+    background: #F5F5F5;
+    padding: 1px;
+    outline: none; /* Disable outline for keyboard focusability */
+    /* outline: 2px solid white; */
+
+}
+    th {
+        color: #000000;
+        font: 14px verdana;
+        background: #A9C5EB;
+        padding: 1px;
+        /* Additional styles for accessibility */
+        font-weight: bold;
+        /* line-height: 1.5;
+        letter-spacing: 0.5px; */
+        margin: 10px; /* Add space on all four sides */
+        /* outline: 1px solid white; */
+    }
+    table {
+        color: #000000;
+        font: 14px verdana, "Times New Roman", sans-serif;
+        background: #FFFFFF;
+        margin: 10px;
+        padding: 1px;
+        border-collapse: collapse; /* Optional: To collapse table borders */
+        width: 100%; /* Optional: Make the table fill its container */
+        border-collapse: separate;
+        border-spacing: 2px 2px;
+    }
+    a {
+        color: #0033CC;
+        font: 12px verdana, "Times New Roman", Arial, sans-serif;
+        font-weight: bold;
+        /* Additional styles for accessibility */
+        line-height: 1.5; /* Adjust line height for better readability */
+        letter-spacing: 0.5px; /* Add a little letter spacing for improved legibility */
+        text-decoration: underline;
+    }
+    h3 {
+        color: #00008B;
+        font: 16.38px verdana, "Times New Roman", Arial, sans-serif;
+        font-weight: bold;
+        margin: 16.38px 0px;
+    }
+    h1 {
+        color: #A52A2A;
+        font: 18px verdana, "Times New Roman", Arial, sans-serif;
+        margin: 12.06px 0px;
+        font-weight: bold;
+        /* text-decoration: underline;  */
+        /* text-decoration-color: blue;  */
+    }
+    
+    h2 {
+        color: #A52A2A;
+        font: 16px verdana, "Times New Roman", Arial, sans-serif;
+        margin: 16.28px 0px;
+        text-decoration: underline; /* Add a blue underline to h2 */
+        font-weight: bold;
+        text-decoration-color: blue; /* Set the underline color for h2 */
+    }
+    .fl {
+        display : flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .newsem {
+        margin: 0px;
+    }
+
+    .editable-cell .button-group {
+        display: flex;
+        gap: 5px;
+    }
+
+    .editable-cell .edit-button {
+        padding: 2px 5px;
+        font-size: 12px;
+        cursor: pointer;
+        background: #f0f0f0;
+        border: 1px solid #ccc;
+        margin-left: 5px;
+    }
+
+    .editable-cell .editable {
+        display: none;
+        min-height: 20px;
+        padding: 2px;
+        border: 1px solid #ccc;
+        background: white;
+        margin: 2px;
+    }
+
+    .remove-button {
+        padding: 2px 5px;
+        font-size: 12px;
+        cursor: pointer;
+        background: #f0f0f0;
+        border: 1px solid #ccc;
+    }
+
+    button[onclick="resetAllValues()"] {
+        transition: background-color 0.3s;
+    }
+    
+    button[onclick="resetAllValues()"]:hover {
+        background-color: #ff0000;
+    }
+
+    /* Standardize all button styles */
+    button {
+        padding: 2px 5px;
+        font-size: 12px;
+        cursor: pointer;
+        background: #f0f0f0;
+        border: 1px solid #ccc;
+        margin: 2px;
+    }
+
+    .editable-cell .button-group {
+        display: flex;
+        gap: 5px;
+    }
+
+    .editable-cell .edit-button {
+        margin-left: 5px;
+    }
+
+    .fl1, .fl2, .fl3 {
+        display: flex;
+        gap: 5px;
+        margin: 5px 0;
+        justify-content: center;
+    }
+
+    .popup-overlay {
+        display: none;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 99999;
+        animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+        }
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    .popup-content {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+        width: 300px;
+        font-family: verdana;
+    }
+
+    .popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .popup-title {
+        font-size: 16px;
+        font-weight: bold;
+        color: #A52A2A;
+    }
+
+    .popup-close {
+        cursor: pointer;
+        font-size: 20px;
+        color: #666;
+        background: none;
+        border: none;
+        padding: 5px;
+    }
+
+    .popup-body {
+        margin-bottom: 15px;
+        line-height: 1.4;
+        font-size: 14px;
+    }
+
+    .popup-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    .popup-button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+    .help-button {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .close-button {
+        background-color: #f0f0f0;
+        color: #333;
+    }
+
+    .dont-show-button {
+        background-color: #ff4444;
+        color: white;
+    }
+        </style>
+        <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+        </head><body><table width="100%">
+            
+            <tbody><tr>
+                <td>
+                    <table width="100%">
+                        <tbody><tr>
+                            <th>Roll no</th>
+                            <td class="editable-cell">
+                                <div class="content">-RollNo-
+                                </div>
+                                <div class="button-group">
+                                    <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                    <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                </div>
+                                <div class="editable" contenteditable="true"></div>
+                            </td>
+                            <th>Name </th>
+                            <td class="editable-cell">
+                                <div class="content">-Your Name-
+                                </div>
+                                <div class="button-group">
+                                    <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                    <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                </div>
+                                <div class="editable" contenteditable="true"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Department</th>
+                            <td class="editable-cell">
+                                <div class="content">-Department-
+                                </div>
+                                <div class="button-group">
+                                    <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                    <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                </div>
+                                <div class="editable" contenteditable="true"></div>
+                            </td>
+                            <th>Program</th>
+                            <td>
+                                B.Tech
+                                
+                            </td>
+                        </tr>
+                    </tbody></table>
+                </td>
+            </tr>
+        </tbody></table>
+        <center>
+        <h1>Table of Contents </h1>
+        <table width="100%">
+        
+        <tbody><tr>
+        <td>
+        <ol><b>
+        <li><a href="#performanceSummary">Performance Summary  </a></li>
+        <li><a href="#semDetails">Semester wise Details  </a></li>
+        <li><a href="#personalInfo">Personal Information</a></li>
+            
+                    <!-- <li><a href="/asc/BranchChange">Change of Branch  </a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Last date : null </li> -->
+                     
+            
+        </b></ol></td>
+        </tr>
+        </tbody></table>
+        
+        <br>
+        <a name="performanceSummary"><h2>Academic Performance Summary</h2></a>
+        <div class="fl3"> <button onclick="newCpiRow()">New CPI Row</button> <button onclick="removeDiv3(this)"> Remove These Options</button ></div>
+        <div class="thecpisdiv">
+            <table width="100%">
+                <tbody><tr>
+                    <th>Year</th> 
+                    <th>Sem</th> 
+                    <th>Spi</th> 
+                    <th>Cpi</th> 
+                    <th>Sem Credits</th> 
+                    <th>Cumulative Credits</th> 
+                </tr>
+                <tr>
+                    <td>2024</td>
+                    <td>Autumn</td>
+                    <td class="editable-cell">
+                        <div class="content">--
+                        </div>
+                        <div class="button-group">
+                            <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                            <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                        </div>
+                        <div class="editable" contenteditable="true"></div>
+                    </td>
+                    <td class="editable-cell">
+                        <div class="content">--
+                        </div>
+                        <div class="button-group">
+                            <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                            <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                        </div>
+                        <div class="editable" contenteditable="true"></div>
+                    </td>
+                    <td class="editable-cell">
+                        <div class="content">--
+                        </div>
+                        <div class="button-group">
+                            <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                            <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                        </div>
+                        <div class="editable" contenteditable="true"></div>
+                    </td>
+                    <td class="editable-cell">
+                        <div class="content">--
+                        </div>
+                        <div class="button-group">
+                            <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                            <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                        </div>
+                        <div class="editable" contenteditable="true"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2023</td>
+                    <td>Spring</td>
+                    <td class="editable-cell">
+                        <div class="content">--
+                        </div>
+                        <div class="button-group">
+                            <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                            <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                        </div>
+                        <div class="editable" contenteditable="true"></div>
+                    </td>
+                    <td class="editable-cell">
+                        <div class="content">--
+                        </div>
+                        <div class="button-group">
+                            <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                            <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                        </div>
+                        <div class="editable" contenteditable="true"></div>
+                    </td>
+                    <td class="editable-cell">
+                        <div class="content">--
+                        </div>
+                        <div class="button-group">
+                            <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                            <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                        </div>
+                        <div class="editable" contenteditable="true"></div>
+                    </td>
+                    <td class="editable-cell">
+                        <div class="content">--
+                        </div>
+                        <div class="button-group">
+                            <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                            <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                        </div>
+                        <div class="editable" contenteditable="true"></div>
+                    </td>
+                </tr>
+                
+                    <tr>
+                        <td>2023</td>
+                        <td>Autumn</td>
+                        <td class="editable-cell">
+                            <div class="content">--
+                            </div>
+                            <div class="button-group">
+                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                            </div>
+                            <div class="editable" contenteditable="true"></div>
+                        </td>
+                        <td class="editable-cell">
+                            <div class="content">--
+                            </div>
+                            <div class="button-group">
+                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                            </div>
+                            <div class="editable" contenteditable="true"></div>
+                        </td>
+                        <td class="editable-cell">
+                            <div class="content">--
+                            </div>
+                            <div class="button-group">
+                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                            </div>
+                            <div class="editable" contenteditable="true"></div>
+                        </td>
+                        <td class="editable-cell">
+                            <div class="content">--
+                            </div>
+                            <div class="button-group">
+                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                            </div>
+                            <div class="editable" contenteditable="true"></div>
+                        </td>
+                    </tr>
+                
+                    <tr>
+                        <td>2022</td>
+                        <td>Spring</td>
+                        <td class="editable-cell">
+                            <div class="content">--
+                            </div>
+                            <div class="button-group">
+                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                            </div>
+                            <div class="editable" contenteditable="true"></div>
+                        </td>
+                        <td class="editable-cell">
+                            <div class="content">--
+                            </div>
+                            <div class="button-group">
+                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                            </div>
+                            <div class="editable" contenteditable="true"></div>
+                        </td>
+                        <td>37.0</td>
+                        <td>74.0</td>
+                    </tr>
+                    <tr>
+                        <td>2022</td>
+                        <td>Autumn</td>
+                        <td class="editable-cell">
+                            <div class="content">--
+                            </div>
+                            <div class="button-group">
+                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                            </div>
+                            <div class="editable" contenteditable="true"></div>
+                        </td>
+                        <td class="editable-cell">
+                            <div class="content">--
+                            </div>
+                            <div class="button-group">
+                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                            </div>
+                            <div class="editable" contenteditable="true"></div>
+                        </td>
+                        <td>37.0</td>
+                        <td>37.0</td>
+                    </tr>
+                
+            </tbody></table>
+        </div>
+            <a name="semDetails"><h2>Semesterwise Details</h2></a>
+            <br>
+             <font style="font-size: 14px;" color="red">*This registration is subject to approval(s) from faculty advisor/Course Instructor/Academic office.</font> 
+                <div class="thecourse-maincontent">
+                <div class="CSE">
+                    <div class="fl2">
+                        <button onclick="addNewSem()">Add 4th Semester Courses Table</button>
+                        <button class="remove-button" onclick="removeDiv2(this)">Remove these options</button>
+                    </div>
+                    
+                    <div class="newsemester">
+                        <h3>Year/Semester: 2023-24/Autumn </h3>
+                        <div class="fl1">
+                            <button onclick="onemorerow(this)">Add one more row to this table below</button>
+                            <button onclick="removeonerow(this)">Remove one row</button>
+                            <button class="remove-button" onclick="removeDiv(this)">Remove these options</button>
+                        </div>
+                        <div class="justforaddingandremovingrows">
+                            <table width="100%">
+                                <tbody><tr>
+                                    <th>Course Code</th> 
+                                    <th width="60%">Course Name</th>
+                                    <th>Credits</th>
+                                    <th>Tag</th>
+                                    <th>Grade</th>
+                                    <th>Credit/Audit</th>
+                                </tr>
+                            
+                                
+                                    <tr style="">
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        <td>Core course</td>
+                                        
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        
+                                        <td>C</td>
+                                    </tr>
+                                
+                                    <tr style="">
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        <td>Core course</td>
+                                        
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        
+                                        <td>C</td>
+                                    </tr>
+                                
+                                    <tr style="">
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        <td>Core course</td>
+                                        
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        
+                                        <td>C</td>
+                                    </tr>
+                                
+                                    <tr style="">
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        <td>Core course</td>
+                                        
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        
+                                        <td>C</td>
+                                    </tr>
+                                
+                                    <tr style="">
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        <td>Core course</td>
+                                        
+                                        <td class="editable-cell">
+                                            <div class="content">--
+                                            </div>
+                                            <div class="button-group">
+                                                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                            </div>
+                                            <div class="editable" contenteditable="true"></div>
+                                        </td>
+                                        
+                                        <td>C</td>
+                                    </tr>
+                                
+                        </tbody></table>
+                    </div>
+                
+                    <h3>Year/Semester: 2022-23/Spring </h3>
+                    <table width="100%">
+                        <tbody><tr>
+                            <th>Course Code</th> 
+                            <th width="60%">Course Name</th>
+                            <th>Credits</th>
+                            <th>Tag</th>
+                            <th>Grade</th>
+                            <th>Credit/Audit</th>
+                        </tr>
+                    
+                        
+                            <tr style="">
+                                <td>CS 201 </td>
+                                <td>Data Structures and Algorithms</td>
+                                <td>6.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>CS 211 </td>
+                                <td>Data Structures and Algorithms Lab</td>
+                                <td>3.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>EE 101 </td>
+                                <td>Introduction to Electrical Systems and Electronics</td>
+                                <td>6.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>MA 102 </td>
+                                <td>Linear Algebra</td>
+                                <td>4.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>MA 103 </td>
+                                <td>Differential Equations I</td>
+                                <td>4.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>ME 111 </td>
+                                <td>Engineering Graphics Lab</td>
+                                <td>5.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>ME 113 </td>
+                                <td>Hands on Engineering Lab</td>
+                                <td>3.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>NO 102 </td>
+                                <td>National Sports Organisation</td>
+                                <td>0.0</td>
+                                <td>Core course</td>
+                                
+                                <td>PP </td>
+                                
+                                <td>N</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>PH 102 </td>
+                                <td>Electricity and Magnetism</td>
+                                <td>6.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                    </tbody></table>
+                
+                    <h3>Year/Semester: 2022-23/Autumn </h3>
+                    <table width="100%">
+                        <tbody><tr>
+                            <th>Course Code</th> 
+                            <th width="60%">Course Name</th>
+                            <th>Credits</th>
+                            <th>Tag</th>
+                            <th>Grade</th>
+                            <th>Credit/Audit</th>
+                        </tr>
+                    
+                        
+                            <tr style="">
+                                <td>BB 103 </td>
+                                <td>Introduction to Modern Biology</td>
+                                <td>6.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>CH 102 </td>
+                                <td>Concepts and Applications of Chemistry</td>
+                                <td>6.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>CS 103 </td>
+                                <td>Introduction to Programming - 1</td>
+                                <td>4.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>EE 103 </td>
+                                <td>Introduction to Programming - 2</td>
+                                <td>4.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>HS 103 </td>
+                                <td>Introduction to Fine Arts</td>
+                                <td>0.0</td>
+                                <td>Core course</td>
+                                
+                                <td>PP </td>
+                                
+                                <td>N</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>HS 106 </td>
+                                <td>Design thinking and Creativity</td>
+                                <td>0.0</td>
+                                <td>Core course</td>
+                                
+                                <td>PP </td>
+                                
+                                <td>N</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>MA 109 </td>
+                                <td>Calculus I</td>
+                                <td>4.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>MA 121 </td>
+                                <td>Calculus II</td>
+                                <td>4.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>NO 101 </td>
+                                <td>National Sports Organisation</td>
+                                <td>0.0</td>
+                                <td>Core course</td>
+                                
+                                <td>PP </td>
+                                
+                                <td>N</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>PH 101 </td>
+                                <td>Quantum Physics and Applications</td>
+                                <td>6.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                            <tr style="">
+                                <td>PH 113 </td>
+                                <td>Hands on Science Laboratory - I</td>
+                                <td>3.0</td>
+                                <td>Core course</td>
+                                
+                                <td class="editable-cell">
+                                    <div class="content">AA
+                                    </div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                
+                                <td>C</td>
+                            </tr>
+                        
+                    </tbody></table>
+                </div>
+                </div>
+        <a name="personalInfo"><h2>Personal Info</h2></a>
+        <table width="100%">
+            <tr>
+                <th>Name</th>
+                <td class="editable-cell">
+                    <div class="content">-Your Name-</div>
+                    <div class="button-group">
+                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                    </div>
+                    <div class="editable" contenteditable="true"></div>
+                    </td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td class="editable-cell">
+                    <div class="content">22XXXXXXX@iitdh.ac.in
+                    </div>
+                    <div class="button-group">
+                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                    </div>
+                    <div class="editable" contenteditable="true"></div>
+                    </td>
+            </tr>
+        <tr>
+            <th>Current Address</th>
+            <td class="editable-cell">
+                <div class="content">Indian Institute of Technology
+                    Chikki Malligwad, Karnataka 1234567890
+                </div>
+                <div class="button-group">
+                    <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                    <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                </div>
+                <div class="editable" contenteditable="true"></div>
+                </td>
+        </tr>
+        <tr>
+            <th>Current Phone</th>
+            <td class="editable-cell">
+                <div class="content">1234567890</div>
+                <div class="button-group">
+                    <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                    <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                </div>
+                <div class="editable" contenteditable="true"></div>
+                </td>
+        <tr>
+            <th>Permanent Address</th>
+            <td class="editable-cell">
+                <div class="content">Indian Institute of Technology
+                    Chikki Malligwad, Karnataka 1234567890
+                </div>
+                <div class="button-group">
+                    <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                    <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                </div>
+                <div class="editable" contenteditable="true"></div>
+                </td>
+        </tr>
+        <tr>
+            <th>Permanent Phone</th>
+            <td class="editable-cell">
+                <div class="content">1234567890</div>
+                <div class="button-group">
+                    <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                    <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                </div>
+                <div class="editable" contenteditable="true"></div>
+                </td>
+        </tr>
+        <tr><th>Alternate Phone</th><td></td></tr>
+        <tr>
+            <th>Date of Birth</th>
+            <td class="editable-cell">
+                <div class="content">2000-01-01</div>
+                <div class="button-group">
+                    <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                    <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                </div>
+                <div class="editable" contenteditable="true"></div>
+                </td>
+            </tr>
+        <tr><th>Vaccination Status</th><td>Not vaccinated yet</td></tr>
+        <tr><th>Hostel/Room</th><td>NA/</td></tr>
+        <tr><th>Nationality</th><td>Indian</td></tr>
+        <tr><th>Gender</th><td>M</td></tr>
+        <tr>
+            <th>Name of Parent</th>
+            <td class="editable-cell">
+                <div class="content">-Father Name-</div>
+                <div class="button-group">
+                    <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                    <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                </div>
+                <div class="editable" contenteditable="true"></div>
+                </td>
+            </tr>
+        <tr>
+            <th>Emergency Contact</th>
+            <td class="editable-cell">
+                <div class="content">1234567890</div>
+                <div class="button-group">
+                    <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                    <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                </div>
+                <div class="editable" contenteditable="true"></div>
+                </td>
+        </tr>
+        <tr><th>Lab/Office Phone</th><td></td></tr>
+        <tr><th>Joining Date</th><td>2022-XX-XX</td></tr>
+        <tr><th>Admission Category</th><td>Indian</td></tr>
+        </tbody></table>
+        <a href="/asc/sessLogout.jsp">Logout</a>
+        </center>
+        <div class="bottom-buttons" style="text-align: center; margin: 20px 0;">
+            <button onclick="confirmAllValues()" style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+                Confirm All Changes & Save
+            </button>
+            <button onclick="resetAllValues()" style="padding: 10px 20px; background-color: #ff4444; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Reset All Values
+            </button>
+        </div>
+        <div id="welcomePopup" class="popup-overlay">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <div class="popup-title">Welcome!</div>
+                    <button class="popup-close" onclick="closePopup()">×</button>
+                </div>
+                <div class="popup-body">
+                    Open your ASC portal and type the values by looking at them as this will take time to fill.
+                </div>
+                <div class="popup-buttons">
+                    <button class="popup-button help-button" onclick="openHelp()">Help</button>
+                    <button class="popup-button close-button" onclick="closePopup()">Close</button>
+                    <button class="popup-button dont-show-button" onclick="dontShowAgain()">Don't show again</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            function enableEditing(button) {
+    const td = button.closest('.editable-cell');
+    const contentDiv = td.querySelector('.content');
+    const editableDiv = td.querySelector('.editable');
+    
+    // Change button text to "Ok"
+    button.textContent = 'Ok';
+    
+    // Show the editable div, hide the content div
+    editableDiv.style.display = 'inline-block';
+    contentDiv.style.display = 'none';
+    
+    // Clear the editable div instead of copying current content
+    editableDiv.textContent = '';
+    
+    // Focus on the editable div
+    editableDiv.focus();
+    
+    // Add click handler to the Ok button
+    button.onclick = function() {
+        // Only update content if something was entered
+        if (editableDiv.textContent.trim() !== '') {
+            contentDiv.textContent = editableDiv.textContent;
+        }
+        // If nothing was entered, keep the original content
+        
+        // Hide editable, show content
+        editableDiv.style.display = 'none';
+        contentDiv.style.display = 'inline-block';
+        
+        // Change button back to "Edit"
+        button.textContent = 'Edit';
+        
+        // Reset onclick handler to enableEditing
+        button.onclick = function() { enableEditing(button); };
+        
+        // Save to localStorage
+        saveToLocalStorage();
+    };
+}
+
+function confirmEditing(button) {
+    const td = button.closest('.editable-cell');
+    const contentDiv = td.querySelector('.content');
+    const editableDiv = td.querySelector('.editable');
+    const buttonGroup = td.querySelector('.button-group');
+    
+    // Update the content
+    contentDiv.textContent = editableDiv.textContent;
+    
+    // Show content, hide editable and buttons
+    contentDiv.style.display = 'block';
+    editableDiv.style.display = 'none';
+    buttonGroup.style.display = 'none';
+    
+    // Save to localStorage
+    saveToLocalStorage();
+}
+
+function onemorerow(button) {
+    // Find the specific table for this button
+    const semesterDiv = button.closest('.newsemester');
+    const table = semesterDiv.querySelector('.justforaddingandremovingrows table tbody');
+    
+    // Create new row with the same structure
+    const newRow = `
+        <tr style="">
+            <td class="editable-cell">
+                <div class="content">--</div>
+                <div class="button-group">
+                    <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                    <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                </div>
+                <div class="editable" contenteditable="true"></div>
+            </td>
+            <td class="editable-cell">
+                <div class="content">--</div>
+                <div class="button-group">
+                    <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                    <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                </div>
+                <div class="editable" contenteditable="true"></div>
+            </td>
+            <td class="editable-cell">
+                <div class="content">--</div>
+                <div class="button-group">
+                    <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                    <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                </div>
+                <div class="editable" contenteditable="true"></div>
+            </td>
+            <td>Core course</td>
+            <td class="editable-cell">
+                <div class="content">--</div>
+                <div class="button-group">
+                    <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                    <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                </div>
+                <div class="editable" contenteditable="true"></div>
+            </td>
+            <td>C</td>
+        </tr>`;
+    
+    table.insertAdjacentHTML('beforeend', newRow);
+}
+
+function removeonerow(button) {
+    // Find the specific table for this button
+    const semesterDiv = button.closest('.newsemester');
+    const table = semesterDiv.querySelector('.justforaddingandremovingrows table tbody');
+    const rows = table.querySelectorAll('tr');
+    
+    // Don't remove if only header row remains
+    if (rows.length > 1) {
+        table.removeChild(rows[rows.length - 1]);
+    }
+}
+
+function addNewSem() {
+    // Get all existing semester tables
+    let existingSemesters = document.querySelectorAll('.CSE h3');
+    let nextSemNumber = existingSemesters.length;
+    
+    // Get the current top semester's heading
+    let currentTopSemester = existingSemesters[0];
+    let currentYearText = currentTopSemester.textContent;
+    
+    // Extract year and semester using regex to ensure reliable extraction
+    let yearMatch = currentYearText.match(/(\d{4}-\d{2})/);
+    let semMatch = currentYearText.match(/(Autumn|Spring)/);
+    
+    if (!yearMatch || !semMatch) {
+        console.error('Could not parse year or semester');
+        return;
+    }
+
+    let currentYear = yearMatch[1];
+    let currentSem = semMatch[1];
+    
+    // Parse the year range
+    let [startYear, endYearShort] = currentYear.split('-');
+    startYear = parseInt(startYear);
+    let endYear = parseInt('20' + endYearShort); // Convert '23' to 2023
+    
+    // Calculate next semester's year and term
+    let newYear, newSem;
+    
+    if (currentSem === "Autumn") {
+        // If current is Autumn, next is Spring of same academic year
+        newYear = `${startYear}-${endYearShort}`;
+        newSem = "Spring";
+    } else {
+        // If current is Spring, next is Autumn of next academic year
+        let newStartYear = startYear + 1;
+        let newEndYear = endYear + 1;
+        let newEndYearShort = (newEndYear % 100).toString().padStart(2, '0');
+        newYear = `${newStartYear}-${newEndYearShort}`;
+        newSem = "Autumn";
+    }
+
+    // Create wrapper for the new semester
+    let newSemContent = `
+        <div class="newsemester">
+            <h3>Year/Semester: ${newYear}/${newSem}</h3>
+            <div class="fl1">
+                <button onclick="onemorerow(this)">Add one more row to this table below</button>
+                <button onclick="removeonerow(this)">Remove one row</button>
+                <button class="remove-button" onclick="removeDiv(this)">Remove these options</button>
+            </div>
+            <div class="justforaddingandremovingrows">
+                <table width="100%">
+                    <tbody>
+                        <tr>
+                            <th>Course Code</th> 
+                            <th width="60%">Course Name</th>
+                            <th>Credits</th>
+                            <th>Tag</th>
+                            <th>Grade</th>
+                            <th>Credit/Audit</th>
+                        </tr>
+                        ${Array(5).fill(`
+                            <tr style="">
+                                <td class="editable-cell">
+                                    <div class="content">--</div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                <td class="editable-cell">
+                                    <div class="content">--</div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                <td class="editable-cell">
+                                    <div class="content">--</div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                <td>Core course</td>
+                                <td class="editable-cell">
+                                    <div class="content">--</div>
+                                    <div class="button-group">
+                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+                                    </div>
+                                    <div class="editable" contenteditable="true"></div>
+                                </td>
+                                <td>C</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    `;
+    
+    // Create new div and insert content
+    let newSemDiv = document.createElement('div');
+    newSemDiv.innerHTML = newSemContent;
+    
+    // Insert before the current top semester
+    let firstSemester = document.querySelector('.CSE .newsemester');
+    firstSemester.parentNode.insertBefore(newSemDiv, firstSemester);
+    
+    // Update the button text for next semester
+    let nextButtonNumber = nextSemNumber + 2; // +2 because we want 4th, 5th, etc.
+    document.querySelector('.fl2').innerHTML = `
+        <button onclick="addNewSem()">add ${nextButtonNumber}th semester courses table</button>
+        <button class="remove-button" onclick="removeDiv2(this)">remove these options</button>
+    `;
+}
+
+function removeDiv(button) {
+    // Find the parent div and remove it
+    const parentDiv = button.closest('.fl1');
+    if (parentDiv) {
+        parentDiv.remove();
+        }
+}
+
+function removeDiv2(button) {
+    // Find the parent div and remove it
+    const parentDiv = button.closest('.fl2');
+    if (parentDiv) {
+        parentDiv.remove();
+        }
+}
+
+function removeDiv3(button) {
+    // Find the parent div and remove it
+    const parentDiv = button.closest('.fl3');
+    if (parentDiv) {
+        parentDiv.remove();
+        }
+}
+
+function newCpiRow() {
+    let table = document.querySelector('.thecpisdiv table');
+    let rows = table.querySelectorAll('tr');
+    
+    // Get semester and year from first row (after header)
+    let latestYear = rows[1].cells[0].textContent;
+    let latestSem = rows[1].cells[1].textContent;
+    let secondYear = rows[2].cells[0].textContent;
+    
+    // Determine new year and semester
+    let newYear = latestYear;
+    let newSem = "Spring";
+    
+    if (latestSem === "Spring") {
+        newSem = "Autumn";
+        if (latestYear === secondYear) {
+            newYear = parseInt(latestYear) + 1;
+        }
+    }
+
+    // Create new row
+    let newRow = document.createElement('tr');
+    newRow.innerHTML = `
+        <td>${newYear}</td>
+        <td>${newSem}</td>
+        <td class="editable-cell">
+            <div class="content">--</div>
+            <div class="button-group">
+                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+            </div>
+            <div class="editable" contenteditable="true"></div>
+        </td>
+        <td class="editable-cell">
+            <div class="content">--</div>
+            <div class="button-group">
+                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+            </div>
+            <div class="editable" contenteditable="true"></div>
+        </td>
+        <td class="editable-cell">
+            <div class="content">--</div>
+            <div class="button-group">
+                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+            </div>
+            <div class="editable" contenteditable="true"></div>
+        </td>
+        <td class="editable-cell">
+            <div class="content">--</div>
+            <div class="button-group">
+                <button class="edit-button" onclick="enableEditing(this)">Edit</button>
+                <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
+            </div>
+            <div class="editable" contenteditable="true"></div>
+        </td>
+    `;
+
+    // Insert after header row
+    rows[0].insertAdjacentElement('afterend', newRow);
+}
+
+// Add these functions for storage management
+function saveToLocalStorage() {
+    const editableCells = document.querySelectorAll('.editable-cell');
+    const storedData = {};
+    
+    editableCells.forEach((cell, index) => {
+        const content = cell.querySelector('.content').textContent.trim();
+        if (content !== '--') {
+            storedData[`cell_${index}`] = content;
+        }
+    });
+    
+    localStorage.setItem('transcriptData', JSON.stringify(storedData));
+}
+
+function loadFromLocalStorage() {
+    const storedData = localStorage.getItem('transcriptData');
+    if (storedData) {
+        const data = JSON.parse(storedData);
+        const editableCells = document.querySelectorAll('.editable-cell');
+        
+        editableCells.forEach((cell, index) => {
+            const content = data[`cell_${index}`];
+            if (content) {
+                const contentDiv = cell.querySelector('.content');
+                contentDiv.textContent = content;
+                // Don't hide the buttons on load
+                // Keep the button-group visible
+                const buttonGroup = cell.querySelector('.button-group');
+                if (buttonGroup) {
+                    buttonGroup.style.display = 'flex';
+                }
+            }
+        });
+    }
+}
+
+function resetAllValues() {
+    if (confirm('Are you sure you want to reset all values? This will return the page to its initial state.')) {
+        localStorage.removeItem('transcriptData');
+        window.location.reload();
+        // The showPopup will be triggered by DOMContentLoaded after reload
+    }
+}
+
+function confirmAllValues() {
+    if (confirm('This will remove all editing options. Are you sure you want to proceed?')) {
+        // First confirm all values
+        const editableCells = document.querySelectorAll('.editable-cell');
+        editableCells.forEach(cell => {
+            const buttonGroup = cell.querySelector('.button-group');
+            if (buttonGroup && buttonGroup.style.display !== 'none') {
+                const confirmButton = cell.querySelector('.confirm-button');
+                if (confirmButton) {
+                    confirmEditing(confirmButton);
+                }
+            }
+        });
+
+        // Hide all control buttons (CPI, semester, row buttons)
+        const allControlButtons = document.querySelectorAll('.fl1, .fl2, .fl3');
+        allControlButtons.forEach(buttonGroup => {
+            buttonGroup.style.display = 'none';
+        });
+
+        saveToLocalStorage();
+
+        // After hiding all buttons, ask about screenshot
+        if (confirm('Do you want a screenshot of the whole webpage?')) {
+            // Temporarily hide the bottom buttons
+            const bottomButtons = document.querySelector('.bottom-buttons');
+            bottomButtons.style.display = 'none';
+
+            // Get student name from the Name field
+            let nameCell = document.querySelector('table tr:first-child td.editable-cell .content');
+            let studentName = nameCell ? nameCell.textContent.trim() : 'transcript';
+            
+            // Clean up the name for filename (keep spaces, remove other special characters)
+            studentName = studentName === '-Your Name-' ? 'transcript' : studentName;
+
+            // Take screenshot
+            html2canvas(document.body, {
+                scale: 2,
+                logging: false,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                // Create download link
+                const link = document.createElement('a');
+                link.download = `${studentName}_result.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                // Show the bottom buttons again after screenshot
+                bottomButtons.style.display = 'block';
+            }).catch(err => {
+                console.error('Screenshot failed:', err);
+                alert('Failed to create screenshot. Please try again.');
+                // Show the bottom buttons again in case of error
+                bottomButtons.style.display = 'block';
+            });
+        }
+    }
+}
+
+function isPageEmpty() {
+    const editableCells = document.querySelectorAll('.editable-cell .content');
+    for (let cell of editableCells) {
+        const content = cell.textContent.trim();
+        if (content !== '--' && content !== '-Your Name-' && content !== '-RollNo-' && content !== '-Department-') {
+            return false;
+        }
+    }
+    return true;
+}
+
+let popupInterval;
+
+function showPopup() {
+    document.getElementById('welcomePopup').style.display = 'block';
+}
+
+function closePopup() {
+    document.getElementById('welcomePopup').style.display = 'none';
+    
+    // If not permanently disabled, set interval to show again in 1 minute
+    if (!localStorage.getItem('dontShowPopup')) {
+        clearInterval(popupInterval);
+        popupInterval = setInterval(() => {
+            if (isPageEmpty()) {
+                showPopup();
+            }
+        }, 60000); // 1 minute
+    }
+}
+
+function dontShowAgain() {
+    localStorage.setItem('dontShowPopup', 'true');
+    closePopup();
+    clearInterval(popupInterval);
+}
+
+function openHelp() {
+    window.open('help.html', '_blank');
+    closePopup();
+}
+
+// Initialize popup on page load and after reset
+document.addEventListener('DOMContentLoaded', () => {
+    if (!localStorage.getItem('dontShowPopup')) {
+        // Show first time after 10 seconds
+        setTimeout(() => {
+            if (isPageEmpty()) {
+                showPopup();
+            }
+        }, 10000);
+        
+        // Set up interval for subsequent shows
+        popupInterval = setInterval(() => {
+            if (isPageEmpty()) {
+                showPopup();
+            }
+        }, 60000);
+    }
+});
+        </script> 
+        </body>
+</html>
