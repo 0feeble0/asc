@@ -102,10 +102,17 @@ td {
     .editable-cell .editable {
         display: none;
         min-height: 20px;
+        min-width: 30px;
         padding: 2px;
         border: 1px solid #ccc;
         background: white;
         margin: 2px;
+    }
+
+    .editable-cell .content:empty::after {
+        content: '   ';
+        white-space: pre;
+        color: #999;
     }
 
     .remove-button {
@@ -1236,39 +1243,29 @@ td {
     const td = button.closest('.editable-cell');
     const contentDiv = td.querySelector('.content');
     const editableDiv = td.querySelector('.editable');
+    const buttonGroup = td.querySelector('.button-group');
     
-    // Change button text to "Ok"
-    button.textContent = 'Ok';
-    
-    // Show the editable div, hide the content div
-    editableDiv.style.display = 'inline-block';
+    // Clear and prepare the editable div
+    editableDiv.innerHTML = ''; // Clear the content
+    editableDiv.style.display = 'block';
     contentDiv.style.display = 'none';
     
-    // Clear the editable div instead of copying current content
-    editableDiv.textContent = '';
+    // Change button text
+    button.textContent = 'Ok';
     
-    // Focus on the editable div
-    editableDiv.focus();
+    // Simple focus
+    setTimeout(() => {
+        editableDiv.focus();
+    }, 0);
     
-    // Add click handler to the Ok button
+    // Update button click handler
     button.onclick = function() {
-        // Only update content if something was entered
-        if (editableDiv.textContent.trim() !== '') {
-            contentDiv.textContent = editableDiv.textContent;
-        }
-        // If nothing was entered, keep the original content
-        
-        // Hide editable, show content
+        const newContent = editableDiv.textContent.trim();
+        contentDiv.textContent = newContent || '--'; // Set to '--' if empty
         editableDiv.style.display = 'none';
-        contentDiv.style.display = 'inline-block';
-        
-        // Change button back to "Edit"
+        contentDiv.style.display = 'block';
         button.textContent = 'Edit';
-        
-        // Reset onclick handler to enableEditing
         button.onclick = function() { enableEditing(button); };
-        
-        // Save to hidden textarea instead of localStorage
         saveToLocalStorage();
     };
 }
@@ -1612,10 +1609,46 @@ function loadFromLocalStorage() {
 // Replace the existing resetAllValues function
 function resetAllValues() {
     if (confirm('Are you sure you want to reset all values? This will return the page to its initial state.')) {
-        // Clear both storage methods
-        document.getElementById('storedDataContent').value = '';
-        sessionStorage.removeItem('transcriptData');
+        // Clear all storage
+        const storedDataContent = document.getElementById('storedDataContent');
+        if (storedDataContent) {
+            storedDataContent.value = '';
+        }
+        sessionStorage.clear();
+        localStorage.clear();
+
+        const editableCells = document.querySelectorAll('.editable-cell');
+        editableCells.forEach(cell => {
+            const contentDiv = cell.querySelector('.content');
+            const editableDiv = cell.querySelector('.editable');
+            const buttonGroup = cell.querySelector('.button-group');
+
+            // Reset content
+            contentDiv.textContent = '--';
+            
+            if (editableDiv) {
+                // Clear editable div
+                editableDiv.innerHTML = '';
+                editableDiv.style.display = 'none';
+            }
+
+            // Reset button state
+            if (buttonGroup) {
+                buttonGroup.style.display = 'flex';
+                const editButton = buttonGroup.querySelector('.edit-button');
+                if (editButton) {
+                    editButton.textContent = 'Edit';
+                    editButton.onclick = function() { enableEditing(this); };
+                }
+            }
+        });
+
+        // Show success message
+        alert('All values have been reset successfully!');
+        
+        // Reload the page to ensure a fresh start
         window.location.reload();
+        return false;
     }
 }
 
@@ -1722,22 +1755,28 @@ function showPopup() {
 }
 
 function closePopup() {
-    document.getElementById('welcomePopup').style.display = 'none';
-    
-    // If not permanently disabled, set interval to show again in 1 minute
-    if (!localStorage.getItem('dontShowPopup')) {
-        clearInterval(popupInterval);
-        popupInterval = setInterval(() => {
-            if (isPageEmpty()) {
-                showPopup();
-            }
-        }, 60000); // 1 minute
+    const popup = document.getElementById('welcomePopup');
+    if (popup) {
+        popup.style.display = 'none';
+        
+        // Only set interval if "Don't show again" wasn't clicked
+        if (!sessionStorage.getItem('dontShowPopup')) {
+            // Clear any existing interval first
+            clearInterval(popupInterval);
+            // Set new interval
+            popupInterval = setInterval(() => {
+                if (isPageEmpty()) {
+                    showPopup();
+                }
+            }, 60000); // 1 minute
+        }
     }
 }
 
 function dontShowAgain() {
     sessionStorage.setItem('dontShowPopup', 'true');
     closePopup();
+    // Clear the interval when "Don't show again" is clicked
     clearInterval(popupInterval);
 }
 
@@ -1765,7 +1804,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load any saved data
     loadFromLocalStorage();
     
-    // Always show popup initially unless explicitly disabled
+    // Check if popup should be shown
     const dontShowPopup = sessionStorage.getItem('dontShowPopup') === 'true';
     
     if (!dontShowPopup) {
@@ -1773,6 +1812,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(showPopup, 1000);
         
         // Set up interval for subsequent shows
+        clearInterval(popupInterval); // Clear any existing interval
         popupInterval = setInterval(() => {
             if (isPageEmpty()) {
                 showPopup();
