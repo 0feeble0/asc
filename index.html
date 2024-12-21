@@ -276,7 +276,7 @@ td {
                         <tbody><tr>
                             <th>Roll no</th>
                             <td class="editable-cell">
-                                <div class="content">-RollNo-
+                                <div class="content">--
                                 </div>
                                 <div class="button-group">
                                     <button class="edit-button" onclick="enableEditing(this)">Edit</button>
@@ -286,7 +286,7 @@ td {
                             </td>
                             <th>Name </th>
                             <td class="editable-cell">
-                                <div class="content">-Your Name-
+                                <div class="content">--
                                 </div>
                                 <div class="button-group">
                                     <button class="edit-button" onclick="enableEditing(this)">Edit</button>
@@ -298,7 +298,7 @@ td {
                         <tr>
                             <th>Department</th>
                             <td class="editable-cell">
-                                <div class="content">-Department-
+                                <div class="content">--
                                 </div>
                                 <div class="button-group">
                                     <button class="edit-button" onclick="enableEditing(this)">Edit</button>
@@ -1267,7 +1267,7 @@ function scrollToBottom() {
     editableDiv.innerHTML = ''; // clear editable div
     
     // Transfer using innerHTML
-    if(contentDiv.innerHTML !== '--' && contentDiv.innerHTML !== '-RollNo-' && contentDiv.innerHTML !== '-Your Name-' && contentDiv.innerHTML !== '-Department-') {
+    if(contentDiv.innerHTML !== '--') {
       editableDiv.innerHTML = contentDiv.innerHTML;
     }
     
@@ -1785,7 +1785,7 @@ function isPageEmpty() {
     const editableCells = document.querySelectorAll('.editable-cell .content');
     for (let cell of editableCells) {
         const content = cell.textContent.trim();
-        if (content !== '--' && content !== '-Your Name-' && content !== '-RollNo-' && content !== '-Department-') {
+        if (content !== '--') {
             return false;
         }
     }
