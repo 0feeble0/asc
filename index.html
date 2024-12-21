@@ -1245,8 +1245,9 @@ td {
     const editableDiv = td.querySelector('.editable');
     const buttonGroup = td.querySelector('.button-group');
     
-    // Clear and prepare the editable div
-    editableDiv.innerHTML = ''; // Clear the content
+    // Transfer content from contentDiv to editableDiv
+    editableDiv.textContent = contentDiv.textContent.trim();
+    
     editableDiv.style.display = 'block';
     contentDiv.style.display = 'none';
     
@@ -1276,15 +1277,19 @@ function confirmEditing(button) {
     const editableDiv = td.querySelector('.editable');
     const buttonGroup = td.querySelector('.button-group');
     
-    // Update the content
-    contentDiv.textContent = editableDiv.textContent;
+    // Use the content from contentDiv if editableDiv is empty
+    const finalContent = editableDiv.textContent.trim() || contentDiv.textContent.trim();
+    
+    // Update both divs with the final content
+    contentDiv.textContent = finalContent;
+    editableDiv.textContent = finalContent;
     
     // Show content, hide editable and buttons
     contentDiv.style.display = 'block';
     editableDiv.style.display = 'none';
     buttonGroup.style.display = 'none';
     
-    // Save to hidden textarea instead of localStorage
+    // Save to storage
     saveToLocalStorage();
 }
 
@@ -1831,6 +1836,88 @@ document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') {
         loadFromLocalStorage();
     }
+});
+
+function removeUnwantedElements() {
+    // List of selectors to remove (add more as needed)
+    const unwantedSelectors = [
+        '[href*="static.app"]',
+        '[src*="static.app"]',
+        'iframe[src*="static.app"]',
+        'div[style*="position: fixed"]',
+        'div[class*="static-app"]',
+        'div[id*="static-app"]',
+        'div[class*="banner"]',
+        'div[id*="banner"]',
+        'div[class*="popup"]',
+        'div[id*="popup"]',
+        // Exclude our own popup
+        ':not(#welcomePopup)'
+    ];
+
+    // Remove elements matching these selectors
+    unwantedSelectors.forEach(selector => {
+        try {
+            const elements = document.querySelectorAll(selector);
+            elements.forEach(element => {
+                // Check if it's not our own element
+                if (!element.closest('#welcomePopup') && 
+                    !element.closest('.save-indicator')) {
+                    element.remove();
+                }
+            });
+        } catch (e) {
+            console.debug('Error removing element:', e);
+        }
+    });
+
+    // Remove elements with specific styles that might indicate ads
+    const allElements = document.getElementsByTagName('*');
+    for (let element of allElements) {
+        try {
+            const style = window.getComputedStyle(element);
+            if (style.position === 'fixed' && 
+                style.zIndex > 999999 && 
+                !element.closest('#welcomePopup') && 
+                !element.closest('.save-indicator')) {
+                element.remove();
+            }
+        } catch (e) {
+            console.debug('Error checking element style:', e);
+        }
+    }
+}
+
+// Function to start the monitoring
+function startAdRemoval() {
+    // Initial cleanup
+    removeUnwantedElements();
+    
+    // Set up continuous monitoring
+    const observer = new MutationObserver((mutations) => {
+        removeUnwantedElements();
+    });
+
+    // Configure the observer
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['style', 'class']
+    });
+
+    // Backup interval in case some ads bypass the observer
+    setInterval(removeUnwantedElements, 1000);
+}
+
+// Add this to your existing DOMContentLoaded listener
+document.addEventListener('DOMContentLoaded', () => {
+    // Reference to existing code
+    startLine: 1808
+    endLine: 1827
+    
+    // Add the ad removal
+    startAdRemoval();
 });
         </script> 
         </body>
