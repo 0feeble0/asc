@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <meta charset="UTF-8">
+        <title>ASC PORTAL</title>
         <style>
         td{
         font-family: verdana;}
@@ -262,7 +264,8 @@ td {
     }
         </style>
         <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-        </head><body><div id="storedData" style="display: none;">
+        </head>
+        <body><div id="storedData" style="display: none;">
     <!-- Data will be stored here as JSON in a textarea -->
     <textarea id="storedDataContent"></textarea>
 </div>
@@ -1229,7 +1232,11 @@ td {
                     <button class="popup-close" onclick="closePopup()">×</button>
                 </div>
                 <div class="popup-body">
-                    Open your ASC portal and type the values by looking at them as this will take time to fill.
+                    Open your ASC portal and type the values by looking at them as this will take time.<br>
+                    <br>
+                     <!-- Screenshot is also a feature, you can get that by clicking 'Confirm All Changes & Save':
+                   <button onclick="scrollToBottom()" style = "padding: 5px; margin: 5px; border: none; background-color: #f0f0f0; border-radius: 4px; cursor: pointer; font-size: 13px;">Go Bottom ↓</button> -->
+                   To know How to use this website efficiently, its features and Troubleshooting, Please click on 'Help'.
                 </div>
                 <div class="popup-buttons">
                     <button class="popup-button help-button" onclick="openHelp()">Help</button>
@@ -1239,14 +1246,30 @@ td {
             </div>
         </div>
         <script>
-            function enableEditing(button) {
+
+
+function scrollToBottom() {
+    window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: 'smooth'
+     });
+    closePopup();
+  }
+
+
+  function enableEditing(button) {
     const td = button.closest('.editable-cell');
     const contentDiv = td.querySelector('.content');
     const editableDiv = td.querySelector('.editable');
     const buttonGroup = td.querySelector('.button-group');
     
     // Transfer content from contentDiv to editableDiv
-    editableDiv.textContent = contentDiv.textContent.trim();
+    editableDiv.innerHTML = ''; // clear editable div
+    
+    // Transfer using innerHTML
+    if(contentDiv.innerHTML !== '--' && contentDiv.innerHTML !== '-RollNo-' && contentDiv.innerHTML !== '-Your Name-' && contentDiv.innerHTML !== '-Department-') {
+      editableDiv.innerHTML = contentDiv.innerHTML;
+    }
     
     editableDiv.style.display = 'block';
     contentDiv.style.display = 'none';
@@ -1261,8 +1284,8 @@ td {
     
     // Update button click handler
     button.onclick = function() {
-        const newContent = editableDiv.textContent.trim();
-        contentDiv.textContent = newContent || '--'; // Set to '--' if empty
+        const newContent = editableDiv.innerHTML.trim();
+        contentDiv.innerHTML = newContent || '--'; // Set to '--' if empty
         editableDiv.style.display = 'none';
         contentDiv.style.display = 'block';
         button.textContent = 'Edit';
@@ -1395,72 +1418,114 @@ function addNewSem() {
     }
 
     // Create wrapper for the new semester
-    let newSemContent = `
-        <div class="newsemester">
-            <h3>Year/Semester: ${newYear}/${newSem}</h3>
-            <div class="fl1">
-                <button onclick="onemorerow(this)">Add one more row to this table below</button>
-                <button onclick="removeonerow(this)">Remove one row</button>
-                <button class="remove-button" onclick="removeDiv(this)">Remove these options</button>
-            </div>
-            <div class="justforaddingandremovingrows">
-                <table width="100%">
-                    <tbody>
-                        <tr>
-                            <th>Course Code</th> 
-                            <th width="60%">Course Name</th>
-                            <th>Credits</th>
-                            <th>Tag</th>
-                            <th>Grade</th>
-                            <th>Credit/Audit</th>
-                        </tr>
-                        ${Array(5).fill(`
-                            <tr style="">
-                                <td class="editable-cell">
-                                    <div class="content">--</div>
-                                    <div class="button-group">
-                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
-                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
-                                    </div>
-                                    <div class="editable" contenteditable="true"></div>
-                                </td>
-                                <td class="editable-cell">
-                                    <div class="content">--</div>
-                                    <div class="button-group">
-                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
-                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
-                                    </div>
-                                    <div class="editable" contenteditable="true"></div>
-                                </td>
-                                <td class="editable-cell">
-                                    <div class="content">--</div>
-                                    <div class="button-group">
-                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
-                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
-                                    </div>
-                                    <div class="editable" contenteditable="true"></div>
-                                </td>
-                                <td>Core course</td>
-                                <td class="editable-cell">
-                                    <div class="content">--</div>
-                                    <div class="button-group">
-                                        <button class="edit-button" onclick="enableEditing(this)">Edit</button>
-                                        <button class="confirm-button" onclick="confirmEditing(this)">Confirm</button>
-                                    </div>
-                                    <div class="editable" contenteditable="true"></div>
-                                </td>
-                                <td>C</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    `;
-    
-    // Create new div and insert content
     let newSemDiv = document.createElement('div');
-    newSemDiv.innerHTML = newSemContent;
+    newSemDiv.className = 'newsemester';
+
+    // Create the h3 element
+    let h3 = document.createElement('h3');
+    h3.textContent = `Year/Semester: ${newYear}/${newSem}`;
+    newSemDiv.appendChild(h3);
+
+    // Create the fl1 div
+    let fl1Div = document.createElement('div');
+    fl1Div.className = 'fl1';
+
+    let addRowButton = document.createElement('button');
+    addRowButton.textContent = "Add one more row to this table below";
+    addRowButton.onclick = function() { onemorerow(this); };
+    fl1Div.appendChild(addRowButton);
+
+    let removeRowButton = document.createElement('button');
+    removeRowButton.textContent = "Remove one row";
+    removeRowButton.onclick = function() { removeonerow(this); };
+    fl1Div.appendChild(removeRowButton);
+    
+    let removeOptionsButton = document.createElement('button');
+    removeOptionsButton.textContent = "Remove these options";
+    removeOptionsButton.className = "remove-button";
+    removeOptionsButton.onclick = function() { removeDiv(this); };
+    fl1Div.appendChild(removeOptionsButton);
+    
+    newSemDiv.appendChild(fl1Div);
+
+    // Create the justforaddingandremovingrows div
+    let justforaddingandremovingrowsDiv = document.createElement('div');
+    justforaddingandremovingrowsDiv.className = 'justforaddingandremovingrows';
+
+    let table = document.createElement('table');
+    table.style.width = '100%';
+    let tbody = document.createElement('tbody');
+
+    // Create header row
+    let headerRow = document.createElement('tr');
+    const headers = ["Course Code", "Course Name", "Credits", "Tag", "Grade", "Credit/Audit"];
+    headers.forEach(headerText => {
+        let th = document.createElement('th');
+        th.textContent = headerText;
+        if(headerText === "Course Name"){
+          th.style.width = "60%";
+        }
+        headerRow.appendChild(th);
+    });
+    tbody.appendChild(headerRow);
+
+    // Create 5 rows of data
+    for (let i = 0; i < 5; i++) {
+        let newRow = document.createElement('tr');
+        newRow.style = '';
+
+        // Create 6 columns
+        for (let j = 0; j < 6; j++) {
+            let td = document.createElement('td');
+            
+            if(j === 3) {
+                td.textContent = "Core course"
+                newRow.appendChild(td)
+                continue;
+            }
+            if(j === 5) {
+                td.textContent = "C"
+                newRow.appendChild(td)
+                continue;
+            }
+
+            td.className = 'editable-cell';
+        
+            let contentDiv = document.createElement('div');
+            contentDiv.className = 'content';
+            contentDiv.textContent = '--';
+            td.appendChild(contentDiv);
+
+            let buttonGroupDiv = document.createElement('div');
+            buttonGroupDiv.className = 'button-group';
+
+            let editButton = document.createElement('button');
+            editButton.className = 'edit-button';
+            editButton.textContent = 'Edit';
+            editButton.onclick = function() { enableEditing(this); };
+            buttonGroupDiv.appendChild(editButton);
+
+            let confirmButton = document.createElement('button');
+            confirmButton.className = 'confirm-button';
+            confirmButton.textContent = 'Confirm';
+            confirmButton.onclick = function() { confirmEditing(this); };
+            buttonGroupDiv.appendChild(confirmButton);
+
+            td.appendChild(buttonGroupDiv);
+
+            let editableDiv = document.createElement('div');
+            editableDiv.className = 'editable';
+            editableDiv.contentEditable = 'true';
+            td.appendChild(editableDiv);
+
+            newRow.appendChild(td);
+        }
+        tbody.appendChild(newRow);
+    }
+
+    table.appendChild(tbody);
+    justforaddingandremovingrowsDiv.appendChild(table);
+    newSemDiv.appendChild(justforaddingandremovingrowsDiv);
     
     // Insert before the current top semester
     let firstSemester = document.querySelector('.CSE .newsemester');
@@ -1563,23 +1628,21 @@ function newCpiRow() {
 
 // Replace the existing saveToLocalStorage function
 function saveToLocalStorage() {
-    const editableCells = document.querySelectorAll('.editable-cell');
-    const storedData = {};
-    
-    editableCells.forEach((cell, index) => {
-        const content = cell.querySelector('.content').textContent.trim();
-        if (content !== '--') {
+       const editableCells = document.querySelectorAll('.editable-cell');
+       const storedData = {};
+       
+       editableCells.forEach((cell, index) => {
+          const content = cell.querySelector('.content').innerHTML.trim();
             storedData[`cell_${index}`] = content;
-        }
-    });
-    
-    // Save to both hidden textarea and sessionStorage for redundancy
-    const storedDataContent = document.getElementById('storedDataContent');
-    const dataString = JSON.stringify(storedData);
-    storedDataContent.value = dataString;
-    sessionStorage.setItem('transcriptData', dataString);
-    showSaveIndicator();
-}
+       });
+       
+       // Save to both hidden textarea and sessionStorage for redundancy
+       const storedDataContent = document.getElementById('storedDataContent');
+       const dataString = JSON.stringify(storedData);
+       storedDataContent.value = dataString;
+       sessionStorage.setItem('transcriptData', dataString);
+       showSaveIndicator();
+    }
 
 function loadFromLocalStorage() {
     // Try to load from sessionStorage first, then fallback to hidden textarea
@@ -1746,6 +1809,7 @@ function showPopup() {
                 </div>
                 <div class="popup-body">
                     Open your ASC portal and type the values by looking at them as this will take time to fill.
+
                 </div>
                 <div class="popup-buttons">
                     <button class="popup-button help-button" onclick="openHelp()">Help</button>
@@ -1837,87 +1901,6 @@ document.addEventListener('visibilitychange', () => {
     }
 });
 
-function removeUnwantedElements() {
-    // List of selectors to remove (add more as needed)
-    const unwantedSelectors = [
-        '[href*="static.app"]',
-        '[src*="static.app"]',
-        'iframe[src*="static.app"]',
-        'div[style*="position: fixed"]',
-        'div[class*="static-app"]',
-        'div[id*="static-app"]',
-        'div[class*="banner"]',
-        'div[id*="banner"]',
-        'div[class*="popup"]',
-        'div[id*="popup"]',
-        // Exclude our own popup
-        ':not(#welcomePopup)'
-    ];
-
-    // Remove elements matching these selectors
-    unwantedSelectors.forEach(selector => {
-        try {
-            const elements = document.querySelectorAll(selector);
-            elements.forEach(element => {
-                // Check if it's not our own element
-                if (!element.closest('#welcomePopup') && 
-                    !element.closest('.save-indicator')) {
-                    element.remove();
-                }
-            });
-        } catch (e) {
-            console.debug('Error removing element:', e);
-        }
-    });
-
-    // Remove elements with specific styles that might indicate ads
-    const allElements = document.getElementsByTagName('*');
-    for (let element of allElements) {
-        try {
-            const style = window.getComputedStyle(element);
-            if (style.position === 'fixed' && 
-                style.zIndex > 999999 && 
-                !element.closest('#welcomePopup') && 
-                !element.closest('.save-indicator')) {
-                element.remove();
-            }
-        } catch (e) {
-            console.debug('Error checking element style:', e);
-        }
-    }
-}
-
-// Function to start the monitoring
-function startAdRemoval() {
-    // Initial cleanup
-    removeUnwantedElements();
-    
-    // Set up continuous monitoring
-    const observer = new MutationObserver((mutations) => {
-        removeUnwantedElements();
-    });
-
-    // Configure the observer
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-        attributeFilter: ['style', 'class']
-    });
-
-    // Backup interval in case some ads bypass the observer
-    setInterval(removeUnwantedElements, 1000);
-}
-
-// Add this to your existing DOMContentLoaded listener
-document.addEventListener('DOMContentLoaded', () => {
-    // Reference to existing code
-    startLine: 1808
-    endLine: 1827
-    
-    // Add the ad removal
-    startAdRemoval();
-});
         </script> 
         </body>
 </html>
