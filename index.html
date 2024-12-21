@@ -1232,10 +1232,10 @@ td {
                     <button class="popup-close" onclick="closePopup()">×</button>
                 </div>
                 <div class="popup-body">
-                    Open your ASC portal and type the values by looking at them as this will take time.<br>
+                    Open your ASC portal and type the values by looking at them as this will take time to fill.
                     <br>
-                     <!-- Screenshot is also a feature, you can get that by clicking 'Confirm All Changes & Save':
-                   <button onclick="scrollToBottom()" style = "padding: 5px; margin: 5px; border: none; background-color: #f0f0f0; border-radius: 4px; cursor: pointer; font-size: 13px;">Go Bottom ↓</button> -->
+                    <br>
+                   Screenshot is also a feature, you can get that by clicking 'Confirm All Changes & Save' after confirming all changes.
                    To know How to use this website efficiently, its features and Troubleshooting, Please click on 'Help'.
                 </div>
                 <div class="popup-buttons">
@@ -1644,14 +1644,14 @@ function saveToLocalStorage() {
        showSaveIndicator();
     }
 
-function loadFromLocalStorage() {
+    function loadFromLocalStorage() {
     // Try to load from sessionStorage first, then fallback to hidden textarea
     let storedData = sessionStorage.getItem('transcriptData');
     if (!storedData) {
         const storedDataContent = document.getElementById('storedDataContent');
         storedData = storedDataContent.value;
     }
-    
+
     if (storedData) {
         try {
             const data = JSON.parse(storedData);
@@ -1661,7 +1661,7 @@ function loadFromLocalStorage() {
                 const content = data[`cell_${index}`];
                 if (content) {
                     const contentDiv = cell.querySelector('.content');
-                    contentDiv.textContent = content;
+                    contentDiv.innerHTML = content;
                     const buttonGroup = cell.querySelector('.button-group');
                     if (buttonGroup) {
                         buttonGroup.style.display = 'flex';
